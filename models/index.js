@@ -1,4 +1,3 @@
 const Pizza = require('./Pizza');
 
-
-module.expors = { Pizza };
+module.exports = { Pizza };

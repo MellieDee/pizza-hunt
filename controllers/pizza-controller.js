@@ -1,5 +1,4 @@
 const { Pizza } = require('../models');
-const { db } = require('../models/Pizza');
 
 
 //Create all of these functions as methods of the pizzaController object. 
@@ -24,7 +23,7 @@ const pizzaController = {
     Pizza.findOne({ _id: params.id })
       .then(dbPizzaData => {
         if (!dbPizzaData) {
-          res.status(404).json({ message: 'No Pizza found with this id' })
+          res.status(404).json({ message: 'No Pizza found with this ID' })
           return;
         }
         res.json(dbPizzaData);
@@ -50,7 +49,7 @@ const pizzaController = {
       //set to true returns new not old doc
       .then(dbPizzaData => {
         if (!dbPizzaData) {
-          res.status(404).json({ message: "no izza found with this ID" })
+          res.status(404).json({ message: "No Pizza found with this ID" })
           return;
         }
         res.json(dbPizzaData)
@@ -60,15 +59,15 @@ const pizzaController = {
 
   // DELETE a Pizza
   deletePizza({ params }, res) {
-    PizzaFinOneAndDelete({ _id: params.id })
+    Pizza.findOneAndDelete({ _id: params.id })
       .then(dbPizzaData => {
         if (!dbPizzaData) {
-          res.status(404).json({ message: "No pizza found iwth that ID" })
+          res.status(404).json({ message: 'No  Pizza found with this ID!' });
           return;
         }
         res.json(dbPizzaData);
       })
-      .cath(err => res.status(400).json(err));
+      .catch(err => res.status(400).json(err));
   }
 }
 

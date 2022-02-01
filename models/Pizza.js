@@ -1,13 +1,12 @@
 const { Schema, model } = require('mongoose');
 
 
-
 const PizzaSchema = new Schema({
   pizzaName: {
     type: String
   },
   createdBy: {
-    type: String,
+    type: String
   },
   createdAt: {
     type: Date,
@@ -21,6 +20,7 @@ const PizzaSchema = new Schema({
 });
 
 //  ------------Create Pizza Model --------------
+
 const Pizza = model('Pizza', PizzaSchema);
 
 
