@@ -9,6 +9,35 @@ const $newCommentForm = document.querySelector('#new-comment-form');
 
 let pizzaId;
 
+
+// --------------------------  Get ONE Pizza Starts ---------------------
+function getPizza() {
+  //get id of pizza
+  const searchParams = new URLSearchParams(document.location.search.substring(1));
+  const pizzaId = searchParams.get('id');
+
+  //get pizzaInfo
+  fetch(`/api/pizzas/${pizzaId}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error({ message: 'Something went wrong!' });
+      }
+      console.log(response.json)
+      return response.json();
+    })
+    .then(printPizza)
+    .catch(err => {
+      console.log(err);
+      alert('Cannot find a pizza with this id! Taking you back.');
+      window.history.back();
+
+      //window history API exposes methods that let us control the state of the browser's session
+    });
+}
+// --------------------------  Get ONE Pizza Ends ---------------------
+
+
+// --------------------------  PRINT  Pizza Starts ---------------------
 function printPizza(pizzaData) {
   console.log(pizzaData);
 
@@ -30,7 +59,10 @@ function printPizza(pizzaData) {
     $commentSection.innerHTML = '<h4 class="bg-dark p-3 rounded">No comments yet!</h4>';
   }
 }
+// --------------------------  Print Pizza Ends ---------------------
 
+
+// -------------------------- Print Comment& Reply Starts ---------------------
 function printComment(comment) {
   // make div to hold comment and subcomments
   const commentDiv = document.createElement('div');
@@ -40,14 +72,12 @@ function printComment(comment) {
       <h5 class="text-dark">${comment.writtenBy} commented on ${comment.createdAt}:</h5>
       <p>${comment.commentBody}</p>
       <div class="bg-dark ml-3 p-2 rounded" >
-        ${
-          comment.replies && comment.replies.length
-            ? `<h5>${comment.replies.length} ${
-                comment.replies.length === 1 ? 'Reply' : 'Replies'
-              }</h5>
+        ${comment.replies && comment.replies.length
+      ? `<h5>${comment.replies.length} ${comment.replies.length === 1 ? 'Reply' : 'Replies'
+      }</h5>
         ${comment.replies.map(printReply).join('')}`
-            : '<h5 class="p-1">No replies yet!</h5>'
-        }
+      : '<h5 class="p-1">No replies yet!</h5>'
+    }
       </div>
       <form class="reply-form mt-3" data-commentid='${comment._id}'>
         <div class="mb-3">
@@ -75,6 +105,8 @@ function printReply(reply) {
   </div>
 `;
 }
+// --------------------------  Print Comment & Reply Ends  -----------------------
+
 
 function handleNewCommentSubmit(event) {
   event.preventDefault();
@@ -87,6 +119,28 @@ function handleNewCommentSubmit(event) {
   }
 
   const formData = { commentBody, writtenBy };
+
+  fetch(`/api/comments/${pizzaId}`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Something went wrong!');
+      }
+      response.json();
+    })
+    .then(commentResponse => {
+      console.log(commentResponse);
+      location.reload();
+    })
+    .catch(err => {
+      console.log(err);
+    });
 }
 
 function handleNewReplySubmit(event) {
@@ -105,12 +159,37 @@ function handleNewReplySubmit(event) {
     return false;
   }
 
-  const formData = { writtenBy, replyBody };
+  const formData = { writtenBy, replyBody }
+
+  fetch(`/api/comments/${pizzaId}/${commentId}`, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Something went wrong!');
+      }
+      response.json();
+    })
+    .then(commentResponse => {
+      console.log(commentResponse);
+      location.reload();
+    })
+    .catch(err => {
+      console.log(err);
+    });
 }
 
-$backBtn.addEventListener('click', function() {
+$backBtn.addEventListener('click', function () {
   window.history.back();
 });
 
+
 $newCommentForm.addEventListener('submit', handleNewCommentSubmit);
 $commentSection.addEventListener('submit', handleNewReplySubmit);
+
+getPizza();
