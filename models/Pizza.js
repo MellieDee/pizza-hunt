@@ -5,10 +5,14 @@ const dateFormat = require('../utils/dateFormat');
 const PizzaSchema = new Schema(
   {
     pizzaName: {
-      type: String
+      type: String,
+      required: 'Your pizza needs a name!',
+      trim: true
     },
     createdBy: {
-      type: String
+      type: String,
+      required: "What's your name?",
+      trim: true
     },
     createdAt: {
       type: Date,
@@ -17,13 +21,15 @@ const PizzaSchema = new Schema(
     },
     size: {
       type: String,
-      default: 'Large'
+      required: true,
+      enum: ['Personal', 'Small', 'Medium', 'arge', 'Extra Large'],
+      defualt: 'Large'
     },
     toppings: [],
     comments: [
       {
-        type: Schema.Types.ObjectId,
-        ref: 'Comment'
+        type: Schema.Types.ObjectId,// foreign key ie saying FK is comment ID
+        ref: 'Comment' // comments from Comment
       }
     ]
   },

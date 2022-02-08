@@ -47,7 +47,8 @@ const pizzaController = {
   },
 
 
-  // CREATE Pizza aka NEW Pizza  --destructuredcuz just need the body data
+  // CREATE Pizza aka NEW Pizza  --destructured cuz just need the body data
+  //can handle [] or a single data point (takes[] from objectStore)
   createPizza({ body }, res) {
     Pizza.create(body)
       .then(dbPizzaData => res.json(dbPizzaData))
@@ -58,7 +59,12 @@ const pizzaController = {
   updatePizza({ params, body }, res) {
     Pizza.findOneAndUpdate(
       { _id: params.id },
-      body, { new: true } //new means will return the updated doc with changes in it
+      body,
+      {
+        new: true,
+        runValidators: true
+      } //new means will return the updated doc with changes in it
+      //runValidators in conjunction with require fields in Schema so when pizza is updated -t ALSO gets checked for rules - of not peaople could add super mega size etc
     )
       //set to true returns new not old doc
       .then(dbPizzaData => {
